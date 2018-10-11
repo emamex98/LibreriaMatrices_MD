@@ -1,14 +1,14 @@
-public class RealMatrix {
+public class RationalMatrix {
 
 
     // Atributos de matriz:
     private int m;                      // # de filas
     private int n;                      // # de columnas
-    private double ptrContent[];        // Apuntador al primer indice de arreglo de elementos
+    private String ptrContent[];        // Apuntador al primer indice de arreglo de elementos
     private int len;                    // Tamano del arreglo
 
     // Constructor recibe m, n y arreglo en row-major-order
-    public RealMatrix(int m, int n, double contentParam[]){
+    public RationalMatrix(int m, int n, String contentParam[]){
         this.m = m;
         this.n = n;
         this.len = n*m;
@@ -26,22 +26,22 @@ public class RealMatrix {
     }
 
     // Getter de index especifico comenzando en (0,0) hasta (n-1,m-1)
-    double getIndex(int i, int j){
+    String getIndex(int i, int j){
         return ptrContent[i * this.n + j];
     }
 
     // Getter de index especifico del arreglo comenzando en 0 hasta len-1
-    double getIndexArreglo(int i){
+    String getIndexArreglo(int i){
         return ptrContent[i];
     }
 
     // Getter de index especifico del arreglo comenzando en 0 hasta len-1
-    double[] getArreglo(){
+    String[] getArreglo(){
         return ptrContent;
     }
 
     // Setter de index especifico comenzando en (0,0) hasta (n-1,m-1)
-    void setIndex(int i, int j, double valor){
+    void setIndex(int i, int j, String valor){
         ptrContent[i * this.n + j] = valor;
     }
 
@@ -63,9 +63,9 @@ public class RealMatrix {
     }
 
     // Metodo obtiene matriz transpuesta, regresa matriz resultante
-    RealMatrix getTranspuesta(){
+    RationalMatrix getTranspuesta(){
 
-        double resultado[] = new double[this.len];
+        String resultado[] = new String[this.len];
         int k = 0;
 
         for (int j=0; j<this.n; j++) {
@@ -75,42 +75,59 @@ public class RealMatrix {
             }
         }
 
-        return new RealMatrix(this.n, this.m, resultado);
+        return new RationalMatrix(this.n, this.m, resultado);
     }
 
     // Metodo realiza operación de suma o resta, dependiendo si s es +/-, regresa matriz resultante
-    RealMatrix sumaResta(RealMatrix matrizB, int s){
+    RationalMatrix sumaResta(RationalMatrix matrizB, int s){
 
         if(this.m == matrizB.getM() && this.n == matrizB.getN()){
 
-            double resultado[] = new double[this.len];
+            String resultado[] = new String[this.len];
             int k = 0;
+
+            int a,b,c,d, num, den;
+            String tmp[];
 
             for (int i=0; i<this.m; i++) {
                 for (int j=0; j<this.n; j++) {
-                    resultado[k] = this.getIndex(i, j) + (s * matrizB.getIndex(i, j));
+
+                    tmp = this.getIndex(i,j).split("/");
+                    a = Integer.parseInt(tmp[0]);
+                    b = Integer.parseInt(tmp[1]);
+
+                    tmp = matrizB.getIndex(i,j).split("/");
+                    c = s * Integer.parseInt(tmp[0]);
+                    d = Integer.parseInt(tmp[1]);
+
+                    num = (a*d) + (c*b);
+                    den = b*d;
+
+                    resultado[k] = num + "/" + den;
                     k++;
                 }
             }
 
-            return new RealMatrix(this.m, this.n, resultado);
+            return new RationalMatrix(this.m, this.n, resultado);
         }
 
         return null;
     }
 
     // Metodo suma matrices a+b, regresa matriz resultante
-    RealMatrix sum(RealMatrix matriz){
+    RationalMatrix sum(RationalMatrix matriz){
         return sumaResta(matriz, 1);
     }
 
     // Metodo resta matrices a-b, regresa matriz resultante
-    RealMatrix sub(RealMatrix matriz){
+    RationalMatrix sub(RationalMatrix matriz){
         return  sumaResta(matriz, -1);
     }
 
+    //////////////////
+
     // Metodo multiplica matriz actual por matriz B, regresa apuntador a arreglo o NULL
-    RealMatrix multiply(RealMatrix matrizB){
+    RationalMatrix multiply(RationalMatrix matrizB){
 
         if(matrizB.getM() == this.n){
 
@@ -131,7 +148,7 @@ public class RealMatrix {
                 }
             }
 
-            return new RealMatrix(this.m, matrizB.getN(), resultado);
+            return new RationalMatrix(this.m, matrizB.getN(), resultado);
         }
 
         return null;
@@ -147,13 +164,13 @@ public class RealMatrix {
         }
     }
 
-    RealMatrix getIndentidad(){
+    RationalMatrix getIndentidad(){
 
         if(this.n != this.m)
             return null;
 
         double resultado[] = new double[this.len];
-        RealMatrix identity = new RealMatrix(this.m, this.n, resultado);
+        RationalMatrix identity = new RationalMatrix(this.m, this.n, resultado);
 
         for (int i = 0; i < this.m; i++)
         {
@@ -204,16 +221,16 @@ public class RealMatrix {
         return true;
     }
 
-    //////////////////
+    // No funcionaron :(
 
     double getDeterminante() {
 
         return 0.0;
     }
 
-    RealMatrix getInversa(){
+    RationalMatrix getInversa(){
 
-        RealMatrix inverse = this.getIndentidad();
+        RationalMatrix inverse = this.getIndentidad();
         return inverse;
 
     }
